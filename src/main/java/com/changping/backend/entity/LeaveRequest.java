@@ -22,5 +22,6 @@ public class LeaveRequest {
     private String leave_type;
     private Date leave_date;
     private String remarks;
-    private int staff_id;
+    @Column(name = "staff_id")
+    private int staffId;
 }

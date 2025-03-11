@@ -18,7 +18,6 @@ public class LeaveServiceImpl implements LeaveService{
 
     public LeaveRequestDTO convertToDTO(LeaveRequest leaveRequest) {
         LeaveRequestDTO dto = new LeaveRequestDTO();
-        dto.setId(leaveRequest.getId());
         dto.setName(leaveRequest.getName());
         dto.setClassNum(leaveRequest.getClass_num());
         dto.setStudentId(leaveRequest.getStudent_id());
@@ -42,5 +41,12 @@ public class LeaveServiceImpl implements LeaveService{
         leaveRepository.save(leaveRequest);
     }
 
-
+    @Override
+    public List<LeaveRequestDTO> getLeaveRequestById(Integer id) {
+        List<LeaveRequestDTO> dtos = new ArrayList<>();
+        for(LeaveRequest leaveRequest : leaveRepository.findByStaffId(id)){
+            dtos.add(convertToDTO(leaveRequest));
+        }
+        return dtos;
+    }
 }

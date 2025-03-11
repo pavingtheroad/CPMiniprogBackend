@@ -7,7 +7,6 @@ import java.sql.Date;
 
 @Data
 public class LeaveRequestDTO {
-    private int id;
     private String name;
     private String classNum;
     private String studentId;

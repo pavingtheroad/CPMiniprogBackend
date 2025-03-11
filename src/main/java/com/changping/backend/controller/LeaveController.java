@@ -28,5 +28,12 @@ public class LeaveController {
         return ResponseEntity.ok().build();
     }
 
-
+    @GetMapping("/byStaffid")
+    public List<LeaveRequestDTO> getLeavesByStaffId(@RequestParam String staffId) {
+        System.out.println("getLeavesByStaffId");
+        if (staffId == null || staffId.isEmpty()) {
+            return null;
+        }
+        else return leaveService.getLeaveRequestById(Integer.parseInt(staffId));
+    }
 }

@@ -8,5 +8,8 @@ import java.util.List;
 public interface LeaveService {
 
     // 通过学生姓名获取请假请求
-    public List<LeaveRequestDTO> getLeaveRequestByName(String name);
+    List<LeaveRequestDTO> getLeaveRequestByName(String name);
+
+    //上传请假申请
+    void postLeaveRequest(LeaveRequest leaveRequest);
 }

@@ -37,4 +37,10 @@ public class LeaveServiceImpl implements LeaveService{
         return dtos;
     }
 
+    @Override
+    public void postLeaveRequest(LeaveRequest leaveRequest) {
+        leaveRepository.save(leaveRequest);
+    }
+
+
 }

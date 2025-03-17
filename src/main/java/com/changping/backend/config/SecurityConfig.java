@@ -28,9 +28,9 @@ public class SecurityConfig{
         http
                 .csrf(csrf -> csrf.disable())  // 关闭CSRF，适用于API接口
                 .authorizeHttpRequests(authz ->
-                        authz.requestMatchers("/login","/register").permitAll()
+                        authz.requestMatchers("/login", "/register").permitAll()  // 跳过login和register接口
+                                .requestMatchers("/leave/**").hasAnyAuthority("teacher", "admin")
                                 .anyRequest().authenticated())
-                // .addFilter(new JwtAuthenticationFilter(authenticationManager(http)));  // 添加自定义的JWT过滤器
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

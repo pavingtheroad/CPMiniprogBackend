@@ -16,11 +16,6 @@ public class LeaveController {
         this.leaveService = leaveService;
     }
 
-    @GetMapping("/byname")
-    public List<LeaveRequestDTO> getLeavesByName(@RequestParam String name) {    // @RequestParam 适合获取多个对象
-        return leaveService.getLeaveRequestByName(name);
-    }
-
     @PostMapping("/submit")
     public ResponseEntity<Void> submitLeave(@RequestBody LeaveRequest leaveRequest) {
         System.out.println("submitLeave");

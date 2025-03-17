@@ -2,6 +2,7 @@ package com.changping.backend.jwt.util;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
+import com.nimbusds.jwt.JWTClaimsSet;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.changping.backend.jwt.dto.PayloadDTO;
 import com.nimbusds.jose.*;
@@ -14,7 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JwtUtil {
@@ -47,26 +50,45 @@ public class JwtUtil {
         return null;
     }
     /**
-     * 验证JWT token的有效性
-     * @param token JWT Token
+     * 验证JWT token的有效性，并返回解析后的用户信息
+     *
+     * @param token  JWT Token
      * @param secret 密钥
-     * @return 用户标识或null（如果验证失败）
-     * @throws JOSEException
-     * @throws ParseException
+     * @return 包含用户信息的Map 或 null（验证失败）
      */
-    public static String verifyToken(String token, String secret) throws ParseException, JOSEException {
-        // 解析JWT
-        SignedJWT signedJWT = SignedJWT.parse(token);
+    public static Map<String, String> verifyToken(String token, String secret) {
+        try {
+            // 解析JWT
+            SignedJWT signedJWT = SignedJWT.parse(token);
 
-        // 创建签名验证器，使用相同的密钥
-        JWSVerifier verifier = new MACVerifier(secret);
+            // 创建签名验证器
+            JWSVerifier verifier = new MACVerifier(secret);
 
-        // 验证签名
-        if (signedJWT.verify(verifier)) {
-            // 返回载荷中存储的用户ID或其他标识
-            return signedJWT.getJWTClaimsSet().getSubject();  // 你可以根据需要修改为其他字段
-        } else {
-            return null;  // 签名无效
+            // 验证签名
+            if (!signedJWT.verify(verifier)) {
+                return null;  // 签名无效
+            }
+
+            // 获取载荷
+            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+
+            // 检查是否过期
+            Date expirationTime = claimsSet.getExpirationTime();
+            if (expirationTime != null && expirationTime.before(new Date())) {
+                return null;  // Token 已过期
+            }
+
+            String userId = claimsSet.getSubject();
+            String userPermission = claimsSet.getStringClaim("permission");
+            // 提取用户信息
+            Map<String, String> userData = new HashMap<>();
+            userData.put("name", userId);  // 获取存储的用户名
+            userData.put("role", userPermission);  // 获取角色,提取permission字段
+
+            return userData;
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();  // 记录异常信息
+            return null;
         }
     }
 //    /**

@@ -35,7 +35,9 @@ public class AuthController {
         // 如果认证通过，生成JWT Token
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String staffName = authentication.getName();
-        String jwt = JwtUtil.generateTokenByHMAC(staffName,JwtUtil.DEFAULT_SECRET);
+        String permission = staff.getPermission();
+        // payload存储职工姓名和权限
+        String jwt = JwtUtil.generateTokenByHMAC(staffName + "|" + permission,JwtUtil.DEFAULT_SECRET);
         // 返回JWT Token
         return ResponseEntity.ok(new JwtResponse(jwt));
     }

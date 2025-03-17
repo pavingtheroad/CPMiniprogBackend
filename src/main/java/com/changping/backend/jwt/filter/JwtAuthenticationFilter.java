@@ -1,17 +1,13 @@
 package com.changping.backend.jwt.filter;
 
-import cn.hutool.crypto.SecureUtil;
-import com.changping.backend.jwt.dto.PayloadDTO;
 import com.changping.backend.jwt.util.JwtUtil;
-import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.tomcat.util.json.ParseException;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,22 +17,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getTokenFromRequest(request);
+        // 如果是/login或/register请求，跳过JWT验证
+        if (request.getRequestURI().equals("/login") || request.getRequestURI().equals("/register")) {
+            filterChain.doFilter(request, response);  // 放行
+            return;
+        }
 
+        String token = getTokenFromRequest(request);
         if (token != null) {
             try {
-                // 验证Token并获取用户ID
-                String userId = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
+                // 解析Token，获取用户ID和角色信息
+                Map<String, String> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
+                if (claims != null) {
+                    String userId = claims.get("userId");
+                    String role = claims.get("role");
 
-                if (userId != null) {
-                    // 如果Token验证成功，则设置认证信息
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+                    // 创建权限列表
+                    List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+
+                    // 创建 Spring Security 认证对象
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
                     // Token无效，返回401
@@ -51,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         }
+        filterChain.doFilter(request, response);  // 放行请求
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
@@ -61,17 +69,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-//    private UsernamePasswordAuthenticationToken getAuthentication(String token) throws ParseException, JOSEException, java.text.ParseException {
-//        PayloadDTO payloadDTO = JwtUtil.verifyTokenByHMAC(token, SecureUtil.md5(DEFAULT_SECRET));
-//        String username = payloadDTO.getUsername();
-//        List<String> permission = payloadDTO.getAuthorities();
-//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        for (String authority : permission) {
-//            authorities.add(new SimpleGrantedAuthority(authority));
-//        }
-//        if (username!=null){
-//            return new UsernamePasswordAuthenticationToken(username, null, authorities);
-//        }
-//        return null;
-//    }
 }

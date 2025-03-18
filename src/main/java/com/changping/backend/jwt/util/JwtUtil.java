@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class JwtUtil {
 //     默认密匙
-    public static final String DEFAULT_SECRET = "123456";
+    public static final String DEFAULT_SECRET = "mySuperSecretKey1234567890123456";
 //    private static final String HMAC_SECRET = SecureUtil.md5(DEFAULT_SECRET); // 经过 MD5 加密的密钥
 //
     /**
@@ -34,6 +34,7 @@ public class JwtUtil {
      */
     public static String generateTokenByHMAC(String payloadStr, String secret) throws JOSEException {
         try {//创建JWS头，设置签名算法和类型
+            System.out.println("generateTokenByHMAC");
             JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build();
 
             Payload payload = new Payload(payloadStr);        // 将载荷信息封装进Payload
@@ -46,8 +47,8 @@ public class JwtUtil {
             return jwsObject.serialize();
         }catch (JOSEException e) {
             e.printStackTrace();
+            throw new JOSEException("Error while generating token: " + e.getMessage(), e);
         }
-        return null;
     }
     /**
      * 验证JWT token的有效性，并返回解析后的用户信息
@@ -58,6 +59,7 @@ public class JwtUtil {
      */
     public static Map<String, String> verifyToken(String token, String secret) {
         try {
+            System.out.println("verifyToken");
             // 解析JWT
             SignedJWT signedJWT = SignedJWT.parse(token);
 

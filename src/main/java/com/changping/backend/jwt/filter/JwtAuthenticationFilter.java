@@ -22,8 +22,8 @@ import java.util.Map;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("doFilterInternal");
         // 如果是/login或/register请求，跳过JWT验证
         if (request.getRequestURI().equals("/login") || request.getRequestURI().equals("/register")) {
             filterChain.doFilter(request, response);  // 放行
@@ -36,8 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 解析Token，获取用户ID和角色信息
                 Map<String, String> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
                 if (claims != null) {
-                    String userId = claims.get("userId");
-                    String role = claims.get("role");
+                    String userId = claims.get("id");
+                    String role = claims.get("permission");
 
                     // 创建权限列表
                     List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));

@@ -2,12 +2,11 @@ package com.changping.backend.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.Builder;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
-@Builder
 public class staff {
     @Id
     private int staff_id;

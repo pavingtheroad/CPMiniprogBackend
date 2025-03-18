@@ -1,8 +1,11 @@
 package com.changping.backend.config;
 
 import com.changping.backend.jwt.filter.JwtAuthenticationFilter;
+import com.changping.backend.service.StaffUserDetailService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,13 +21,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    @PostConstruct
+    public void init() {
+        System.out.println("SecurityConfig initialized");
+    }
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final StaffUserDetailService staffUserDetailService;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, StaffUserDetailService staffUserDetailService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.staffUserDetailService = staffUserDetailService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("securityFilterChain");
         http
                 .csrf(csrf -> csrf.disable())  // 关闭CSRF，适用于API接口
                 .authorizeHttpRequests(authz ->
@@ -37,20 +48,16 @@ public class SecurityConfig{
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService())
+        System.out.println("authenticationManager bean is being created");
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(staffUserDetailService)
                 .passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();  // 使用 build() 返回 AuthenticationManager
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+        System.out.println("authenticationManager bean created successfully");
+        return authenticationManager;
     }
 
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("user").password(passwordEncoder().encode("password")).roles("USER").build(),
-                User.withUsername("admin").password(passwordEncoder().encode("admin")).roles("ADMIN").build()
-        );
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

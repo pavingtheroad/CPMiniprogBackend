@@ -44,7 +44,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             String token = null;
             try{
                 token = JwtUtil.generateTokenByHMAC(
-                        JSONUtil.toJsonStr(payloadDTO),    // nimbus-jose-jwt所使用的HMAC，SHA256算法
+                        payloadDTO.getUsername(), payloadDTO.getAuthorities(),    // nimbus-jose-jwt所使用的HMAC，SHA256算法
                         SecureUtil.md5(JwtUtil.DEFAULT_SECRET)    // 所需密匙长度至少要32个字节，因此先用md5加密
                 );
                 response.setHeader("Authorization", token);

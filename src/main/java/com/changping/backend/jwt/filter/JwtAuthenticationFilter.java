@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -34,17 +35,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 // 解析Token，获取用户ID和角色信息
-                Map<String, String> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
+                Map<String, Object> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
                 if (claims != null) {
-                    String userId = claims.get("id");
-                    String role = claims.get("permission");
+                    String username = (String) claims.get("name");
+                    List<String> permissions = (List<String>) claims.get("permission");
+                    System.out.println("Filter中permission："+ permissions + "username" + username);
+                    if (username != null && permissions != null) {
+                        // 创建权限列表
+                        List<GrantedAuthority> authorities = permissions.stream()
+                                .map(SimpleGrantedAuthority::new)  // 转换为 Spring Security 的权限对象
+                                .collect(Collectors.toList());
 
-                    // 创建权限列表
-                    List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+                        // 创建 Spring Security 认证对象
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                                username, null, authorities);  // 使用用户名和权限创建认证对象
 
-                    // 创建 Spring Security 认证对象
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                        // 将认证对象存入 SecurityContext
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        if (authentication != null) {
+                            System.out.println("当前用户权限：" + authentication.getAuthorities());
+                        } else {
+                            System.out.println("Authentication is null.");
+                        }
+                    }
                 } else {
                     // Token无效，返回401
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

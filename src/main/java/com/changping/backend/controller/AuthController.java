@@ -1,10 +1,10 @@
 package com.changping.backend.controller;
 
+import cn.hutool.json.JSONObject;
 import com.changping.backend.entity.staff;
 import com.changping.backend.jwt.util.JwtUtil;
 import com.changping.backend.repository.StaffRepository;
 import com.changping.backend.result.JwtResponse;
-import com.changping.backend.service.StaffUserDetailService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +12,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class AuthController {
@@ -30,27 +35,35 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody staff staff) throws JOSEException {
-        System.out.println("login");
         // 使用Spring Security的认证管理器进行身份验证
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(staff.getName(), staff.getPassword())
             );
-            System.out.println("Authentication object: " + authentication); // 打印认证对象
+//            System.out.println("Authentication object: " + authentication); // 打印认证对象
             if (authentication.isAuthenticated()) {
                 System.out.println("Authentication successful");
+
+                // 获取认证后的 UserDetails
+                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                String username = userDetails.getUsername();
+
+                // 从 userDetails 里获取权限信息
+                Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+                List<String> permissions = authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList());
+
+                System.out.println("permissions: " + permissions);
+
+                // 生成 JWT
+                String jwt = JwtUtil.generateTokenByHMAC(username, permissions, JwtUtil.DEFAULT_SECRET);
+
+                return ResponseEntity.ok(new JwtResponse(jwt));
             } else {
                 System.out.println("Authentication failed");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("认证失败");
             }
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            // 如果认证通过，生成JWT Token
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String staffName = authentication.getName();
-            String permission = staff.getPermission();
-            // payload存储职工姓名和权限
-            String jwt = JwtUtil.generateTokenByHMAC(staffName + "|" + permission,JwtUtil.DEFAULT_SECRET);
-            // 返回JWT Token
-            return ResponseEntity.ok(new JwtResponse(jwt));
         } catch (AuthenticationException e) {
             System.out.println("Authentication failed with exception: " + e.getMessage());
 

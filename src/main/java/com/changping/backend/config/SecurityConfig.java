@@ -40,7 +40,7 @@ public class SecurityConfig{
                 .csrf(csrf -> csrf.disable())  // 关闭CSRF，适用于API接口
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers("/login", "/register").permitAll()  // 跳过login和register接口
-                                .requestMatchers("/leave/**").hasAnyAuthority("teacher", "admin")
+                                .requestMatchers("/leave/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

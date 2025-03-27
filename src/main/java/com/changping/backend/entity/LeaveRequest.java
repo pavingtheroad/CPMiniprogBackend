@@ -1,9 +1,7 @@
 package com.changping.backend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
@@ -17,11 +15,17 @@ public class LeaveRequest {
     private String name;
     @Column(name = "class")
     private String class_num;
-    private String student_id;
+    @Column(name = "student_id")
+    private String studentId;
     private String file_path;
     private String leave_type;
     private Date leave_date;
     private String remarks;
     @Column(name = "staff_id")
-    private int staffId;
+    private String staffId;
+
+    @ManyToOne
+    @JoinColumn(name = "staff_id", referencedColumnName = "staff_id", insertable = false, updatable = false)
+    @JsonBackReference // 避免无限递归
+    private staff staff;
 }

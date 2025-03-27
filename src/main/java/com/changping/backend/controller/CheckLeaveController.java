@@ -17,8 +17,10 @@ public class CheckLeaveController {
         this.leaveService = leaveService;
     }
 
-    @GetMapping("/byname")
-    public List<LeaveRequestDTO> getLeavesByName(@RequestParam String name) {    // @RequestParam 适合获取多个对象
-        return leaveService.getLeaveRequestByName(name);
+    @GetMapping
+    public List<LeaveRequestDTO> getLeavesByName(@RequestParam String keyword) {    // @RequestParam 适合获取多个对象
+        System.out.println("getLeavesByName");
+        System.out.println(leaveService.getLeaveRequestByNameOrId(keyword,keyword));
+        return leaveService.getLeaveRequestByNameOrId(keyword,keyword);
     }
 }

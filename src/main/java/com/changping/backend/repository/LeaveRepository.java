@@ -9,9 +9,11 @@ import java.util.List;
 
 @Repository
 public interface LeaveRepository extends JpaRepository<LeaveRequest, Integer> {
-    List<LeaveRequest> findByName(String name);
+    List<LeaveRequest> findByNameOrStudentId(String name,String student_id);
 
     // JpaRepository 提供了 save(LeaveRequest leaveRequest) 方法
 
-    List<LeaveRequest> findByStaffId(int staff_id);
+    List<LeaveRequest> findByStaffId(String staff_id);
+
+
 }

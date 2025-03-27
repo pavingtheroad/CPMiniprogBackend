@@ -37,10 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 解析Token，获取用户ID和角色信息
                 Map<String, Object> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
                 if (claims != null) {
-                    String username = (String) claims.get("name");
+                    String staffId = (String) claims.get("staffId");
                     List<String> permissions = (List<String>) claims.get("permission");
-                    System.out.println("Filter中permission："+ permissions + "username" + username);
-                    if (username != null && permissions != null) {
+//                    System.out.println("Filter中permission："+ permissions + "username" + username);
+                    if (staffId != null && permissions != null) {
                         // 创建权限列表
                         List<GrantedAuthority> authorities = permissions.stream()
                                 .map(SimpleGrantedAuthority::new)  // 转换为 Spring Security 的权限对象
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                         // 创建 Spring Security 认证对象
                         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                                username, null, authorities);  // 使用用户名和权限创建认证对象
+                                staffId, null, authorities);  // 使用用户名和权限创建认证对象
 
                         // 将认证对象存入 SecurityContext
                         SecurityContextHolder.getContext().setAuthentication(authentication);

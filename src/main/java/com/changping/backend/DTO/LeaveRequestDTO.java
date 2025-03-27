@@ -12,6 +12,7 @@ public class LeaveRequestDTO {
     private String studentId;
     private String leaveType;
     private Date leaveDate;
-    private String remarks;
+    private String remarks;    // 备注
+    private String teacherName;
 
 }

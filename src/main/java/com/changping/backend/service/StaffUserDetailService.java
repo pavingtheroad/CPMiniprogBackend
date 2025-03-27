@@ -21,26 +21,22 @@ public class StaffUserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("loadUserByUsername");
-        // 从数据库查询用户
-        staff staff = staffRepository.findByName(username);
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        staff staff = staffRepository.findByName(name);  // 按 name 查找
 
-        // 如果用户不存在
         if (staff == null) {
             throw new UsernameNotFoundException("用户名不存在！");
         }
-        // 添加 ROLE_ 前缀
-        String permission = staff.getPermission();
-        // **转换为 List<String>**
-        List<SimpleGrantedAuthority> authorities = Arrays.stream(permission.split(","))
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.trim())) // 确保 "ROLE_" 前缀
+
+        List<SimpleGrantedAuthority> authorities = Arrays.stream(staff.getPermission().split(","))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.trim()))
                 .collect(Collectors.toList());
-        // 返回加密后的密码
+
         return new org.springframework.security.core.userdetails.User(
-                staff.getName(),
+                staff.getName(),  // 这里传 name
                 staff.getPassword(),
                 authorities
         );
     }
+
 }

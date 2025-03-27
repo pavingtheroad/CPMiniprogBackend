@@ -16,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,65 +28,61 @@ import java.util.stream.Collectors;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final StaffRepository staffRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthenticationManager authenticationManager, StaffRepository staffRepository) {
+    public AuthController(AuthenticationManager authenticationManager, StaffRepository staffRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.staffRepository = staffRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody staff staff) throws JOSEException {
-        // 使用Spring Security的认证管理器进行身份验证
         try {
+            // 用 name 进行身份验证
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(staff.getName(), staff.getPassword())
             );
-//            System.out.println("Authentication object: " + authentication); // 打印认证对象
+
             if (authentication.isAuthenticated()) {
-                System.out.println("Authentication successful");
-
-                // 获取认证后的 UserDetails
                 UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                String username = userDetails.getUsername();
+                staff loggedInStaff = staffRepository.findByName(userDetails.getUsername()); // 获取完整的用户信息
 
-                // 从 userDetails 里获取权限信息
-                Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-                List<String> permissions = authorities.stream()
+                if (loggedInStaff == null) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("用户不存在");
+                }
+
+                // 这里获取 staffId，而不是 name
+                String staffId = loggedInStaff.getStaffId();
+
+                // 获取权限信息
+                List<String> permissions = userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList());
 
-                System.out.println("permissions: " + permissions);
-
-                // 生成 JWT
-                String jwt = JwtUtil.generateTokenByHMAC(username, permissions, JwtUtil.DEFAULT_SECRET);
+                // 生成 JWT，sub 存 staffId
+                String jwt = JwtUtil.generateTokenByHMAC(staffId, permissions, JwtUtil.DEFAULT_SECRET);
 
                 return ResponseEntity.ok(new JwtResponse(jwt));
             } else {
-                System.out.println("Authentication failed");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("认证失败");
             }
         } catch (AuthenticationException e) {
-            System.out.println("Authentication failed with exception: " + e.getMessage());
-
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("认证失败");
         }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("认证失败");
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody staff staff) {
-        System.out.println("register");
-
-        // 检查用户是否已存在
+        // **修正 `findByName` 逻辑**
         if (staffRepository.findByName(staff.getName()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("用户已存在");
         }
 
-        // **手动加密密码后存入数据库**
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        staff.setPassword(encoder.encode(staff.getPassword()));
+        // **加密密码**
+        staff.setPassword(passwordEncoder.encode(staff.getPassword()));
 
-        // 存入数据库
+        // **存入数据库**
         staffRepository.save(staff);
 
         return ResponseEntity.ok("注册成功");

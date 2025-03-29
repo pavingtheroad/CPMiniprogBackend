@@ -16,5 +16,5 @@ public interface LeaveService {
     // 根据工号获取请假请求表
     List<LeaveRequestDTO> getLeaveRequestById(String id);
 
-    String getStaffIdByName(String name);
+    String getStaffNameById(String staffId);
 }

@@ -65,8 +65,10 @@ public class LeaveController {
     }
 
     @GetMapping("/byStaffid")
-    public List<LeaveRequestDTO> getLeavesByStaffId(@RequestParam String staffId) {
-        System.out.println("getLeavesByStaffId");
+    public List<LeaveRequestDTO> getLeavesByStaffId(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");    // 提取 token（去掉 "Bearer " 前缀）
+        Map<String, Object> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
+        String staffId = (String) claims.get("staffId");
         if (staffId == null || staffId.isEmpty()) {
             return null;
         }

@@ -26,9 +26,9 @@ public class LeaveServiceImpl implements LeaveService{
         dto.setStudentId(leaveRequest.getStudentId());
         dto.setLeaveType(leaveRequest.getLeave_type());
         dto.setLeaveDate(leaveRequest.getLeave_date());
+        dto.setImageUrl(leaveRequest.getFile_path());
         dto.setRemarks(leaveRequest.getRemarks());
-        dto.setTeacherName(
-                staffRepository.findByStaffId(leaveRequest.getStaffId()).getName());
+        dto.setTeacherName(staffRepository.findByStaffId(leaveRequest.getStaffId()).getName());
         return dto;
     }
 

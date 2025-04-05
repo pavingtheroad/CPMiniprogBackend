@@ -10,6 +10,7 @@ import java.sql.Date;
 @Data
 public class repair {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     @Column(name = "repair_type")

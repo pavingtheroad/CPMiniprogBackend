@@ -40,6 +40,7 @@ public class SecurityConfig{
                                 .requestMatchers("/leave/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")
                                 .requestMatchers("/checkLeave").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard")
                                 .requestMatchers("/repair/myApply").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard", "ROLE_repairman")
+                                .requestMatchers("repair/post").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard", "ROLE_repairman")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

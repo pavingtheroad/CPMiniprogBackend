@@ -1,6 +1,5 @@
 package com.changping.backend.DTO;
 
-import com.changping.backend.entity.LeaveRequest;
 import lombok.Data;
 
 import java.sql.Date;

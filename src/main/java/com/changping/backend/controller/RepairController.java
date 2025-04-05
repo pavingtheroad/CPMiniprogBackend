@@ -1,5 +1,6 @@
 package com.changping.backend.controller;
 
+import com.changping.backend.DTO.RepairDTO;
 import com.changping.backend.entity.repair;
 import com.changping.backend.jwt.util.JwtUtil;
 import com.changping.backend.service.RepairService;
@@ -37,8 +38,19 @@ public class RepairController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Void> postRepair(@RequestBody repair repair){
-        repairService.postRepairApply(repair);
+    public ResponseEntity<Void> postRepair(
+            @RequestParam("file") MultipartFile file,
+            RepairDTO repairDTO,
+            @RequestHeader("Authorization") String authorizationHeader){
+        String filePath = file != null ? saveFile(file) : null;
+
+        String token = authorizationHeader.replace("Bearer ", "");    // 提取 token（去掉 "Bearer " 前缀）
+        Map<String, Object> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
+        String staffId = (String) claims.get("staffId");
+        repairDTO.setStaffId(staffId);
+        repair repairEntity = repairDTO.transToRepair(filePath);
+        repairEntity.setHandle(false);
+        repairService.postRepairApply(repairEntity);
         return ResponseEntity.ok().build();
     }
 

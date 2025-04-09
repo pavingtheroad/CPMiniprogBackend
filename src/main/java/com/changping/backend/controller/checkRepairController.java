@@ -2,22 +2,26 @@ package com.changping.backend.controller;
 
 import com.changping.backend.entity.repair;
 import com.changping.backend.service.RepairService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/checkRepair")
 public class checkRepairController {
-    private RepairService repairService;
+    private final RepairService repairService;
     public checkRepairController(RepairService repairService) {
         this.repairService = repairService;
     }
 
-    @GetMapping
+    @GetMapping("/getRepair")
     public List<repair> checkRepair(Boolean handled) {
         return repairService.getRepairListByHandled(handled);
+    }
+
+    @PostMapping("/setHandled")
+    public ResponseEntity<?> setHandled(Integer id, Boolean handled) {
+        return repairService.setHandled(id, handled);
     }
 }

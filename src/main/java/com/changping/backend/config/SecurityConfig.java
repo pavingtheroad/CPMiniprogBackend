@@ -37,10 +37,11 @@ public class SecurityConfig{
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers("/login", "/register").permitAll()  // 跳过login和register接口
                                 .requestMatchers("/uploadimage/**").permitAll()
+                                .requestMatchers("/uploadRepair/**").permitAll()
                                 .requestMatchers("/leave/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")
                                 .requestMatchers("/checkLeave").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard")
-                                .requestMatchers("/repair/myApply").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard", "ROLE_repairman")
-                                .requestMatchers("repair/post").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard", "ROLE_repairman")
+                                .requestMatchers("/repair/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard", "ROLE_repairman")
+                                .requestMatchers("checkRepair/**").hasAnyAuthority( "ROLE_admin", "ROLE_repairman")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

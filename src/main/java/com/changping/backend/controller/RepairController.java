@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public class RepairController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Void> postRepair(
+    public ResponseEntity<?> postRepair(
             @RequestParam("file") MultipartFile file,
             RepairDTO repairDTO,
             @RequestHeader("Authorization") String authorizationHeader){
@@ -50,8 +49,7 @@ public class RepairController {
         repairDTO.setStaffId(staffId);
         repair repairEntity = repairDTO.transToRepair(filePath);
         repairEntity.setHandle(false);
-        repairService.postRepairApply(repairEntity);
-        return ResponseEntity.ok().build();
+        return repairService.postRepairApply(repairEntity);
     }
 
     private String saveFile(MultipartFile file){

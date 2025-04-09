@@ -13,4 +13,6 @@ public interface RepairService {
     List<repair> getRepairListByHandled(Boolean handled);
 
     ResponseEntity<?> postRepairApply(repair repair);
+
+    ResponseEntity<?> setHandled(Integer id, Boolean handled);
 }

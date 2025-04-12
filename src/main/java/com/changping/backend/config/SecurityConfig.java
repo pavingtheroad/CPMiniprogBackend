@@ -31,7 +31,6 @@ public class SecurityConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("securityFilterChain");
         http
                 .csrf(csrf -> csrf.disable())  // 关闭CSRF，适用于API接口
                 .authorizeHttpRequests(authz ->
@@ -43,7 +42,8 @@ public class SecurityConfig{
                                 .requestMatchers("/leave/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")
                                 .requestMatchers("/checkLeave").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard")
                                 .requestMatchers("/repair/**").authenticated()
-                                .requestMatchers("checkRepair/**").hasAnyAuthority( "ROLE_admin", "ROLE_repairman")
+                                .requestMatchers("/checkRepair/**").hasAnyAuthority( "ROLE_admin", "ROLE_repairman")
+                                .requestMatchers("/patrol/**").hasAnyAuthority("ROLE_admin", "ROLE_guard")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

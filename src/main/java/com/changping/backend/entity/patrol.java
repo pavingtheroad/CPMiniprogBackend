@@ -15,6 +15,7 @@ public class patrol {
     private String location;
     private LocalDateTime checkTime;
 
+    @Column(name = "staff_id")
     private String staffId;
 
     @ManyToOne

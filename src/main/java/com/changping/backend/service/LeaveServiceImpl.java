@@ -61,8 +61,8 @@ public class LeaveServiceImpl implements LeaveService{
     }
 
     @Override
-    public String getStaffNameById(String staffId) {
-        return staffRepository.findByStaffId(staffId).getName();
+    public List<LeaveRequest> getAllLeaveRequests() {
+        return leaveRepository.findAll();
     }
 
 }

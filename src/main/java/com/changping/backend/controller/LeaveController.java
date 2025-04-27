@@ -75,6 +75,16 @@ public class LeaveController {
         else return leaveService.getLeaveRequestById(staffId);
     }
 
+    @GetMapping("/get*")
+    public List<LeaveRequest> getLeaves(@RequestHeader("Authorization") String authorizationHeader) {
+        try{
+            return leaveService.getAllLeaveRequests();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     // 保存文件到服务器
     private String saveFile(MultipartFile file) {
         try {

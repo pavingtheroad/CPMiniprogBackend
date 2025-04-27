@@ -14,4 +14,6 @@ public interface LeaveRepository extends JpaRepository<LeaveRequest, Integer> {
     // JpaRepository 提供了 save(LeaveRequest leaveRequest) 方法
 
     List<LeaveRequest> findByStaffId(String staff_id);
+
+    List<LeaveRequest> findAll();
 }

@@ -3,7 +3,6 @@ package com.changping.backend.controller;
 import com.changping.backend.DTO.LeaveRequestDTO;
 import com.changping.backend.entity.LeaveRequest;
 import com.changping.backend.jwt.util.JwtUtil;
-import com.changping.backend.repository.StaffRepository;
 import com.changping.backend.service.LeaveService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -76,7 +75,7 @@ public class LeaveController {
     }
 
     @GetMapping("/get*")
-    public List<LeaveRequest> getLeaves(@RequestHeader("Authorization") String authorizationHeader) {
+    public List<LeaveRequest> getLeaves() {
         try{
             return leaveService.getAllLeaveRequests();
         }catch (Exception e){

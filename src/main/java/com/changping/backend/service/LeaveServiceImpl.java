@@ -12,8 +12,8 @@ import java.util.List;
 @Service
 public class LeaveServiceImpl implements LeaveService{
 
-    private LeaveRepository leaveRepository;
-    private StaffRepository staffRepository;
+    private final LeaveRepository leaveRepository;
+    private final StaffRepository staffRepository;
     public LeaveServiceImpl(LeaveRepository leaveRepository, StaffRepository staffRepository) {
         this.leaveRepository = leaveRepository;
         this.staffRepository = staffRepository;
@@ -48,8 +48,8 @@ public class LeaveServiceImpl implements LeaveService{
 
     /**
      * 提供教师查询自己申请请求的方法
-     * @param id
-     * @return
+     * @param id 前端登录人的id
+     * @return 请假表List<LeaveRequest></LeaveRequest>
      */
     @Override
     public List<LeaveRequestDTO> getLeaveRequestById(String id) {

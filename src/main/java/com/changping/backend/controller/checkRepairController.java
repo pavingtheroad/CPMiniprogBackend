@@ -16,8 +16,9 @@ public class checkRepairController {
     }
 
     @GetMapping("/getRepair")
-    public List<repair> checkRepair(Boolean handled) {
-        return repairService.getRepairListByHandled(handled);
+    public List<repair> checkRepair(@RequestParam String handled) {
+        boolean flag = "true".equalsIgnoreCase(handled);
+        return repairService.getRepairListByHandled(flag);
     }
 
     @PostMapping("/setHandled")

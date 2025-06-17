@@ -11,6 +11,6 @@ import lombok.Data;
 public class location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int location_id;
     private String places;
 }

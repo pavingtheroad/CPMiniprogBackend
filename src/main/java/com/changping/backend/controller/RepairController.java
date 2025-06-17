@@ -64,7 +64,7 @@ public class RepairController {
             String fileName = file.getOriginalFilename();
             Path filePath = Paths.get(uploadRepairDir + fileName);
             Files.write(filePath, file.getBytes());
-            return "uploadRepair/" + fileName;
+            return "uploadrepair/" + fileName;
         }catch (IOException e){
             e.printStackTrace();
             return null;

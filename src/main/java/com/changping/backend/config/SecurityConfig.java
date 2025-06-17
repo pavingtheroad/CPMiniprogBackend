@@ -37,7 +37,7 @@ public class SecurityConfig{
                         authz.requestMatchers("/login", "/register").permitAll()  // 跳过login和register接口
                                 .requestMatchers("/test").permitAll()
                                 .requestMatchers("/uploadimage/**").permitAll()
-                                .requestMatchers("/uploadRepair/**").permitAll()
+                                .requestMatchers("/uploadrepair/**").permitAll()
                                 .requestMatchers("/feedback/**").authenticated()    // 虽然允许全部用户访问，但用户必须登录
                                 .requestMatchers("/checkFeedback/**").hasAnyAuthority("ROLE_admin")
                                 .requestMatchers("/leave/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")

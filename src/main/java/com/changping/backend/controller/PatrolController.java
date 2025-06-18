@@ -1,5 +1,6 @@
 package com.changping.backend.controller;
 
+import com.changping.backend.DTO.PatrolDTO;
 import com.changping.backend.entity.patrol;
 import com.changping.backend.jwt.util.JwtUtil;
 import com.changping.backend.service.PatrolService;
@@ -34,7 +35,7 @@ public class PatrolController {
     }
 
     @GetMapping("/getMyCheckins")
-    public List<String> getMyCheckins(@RequestHeader("Authorization") String authorizationHeader){
+    public List<PatrolDTO> getMyCheckins(@RequestHeader("Authorization") String authorizationHeader){
         String token = authorizationHeader.replace("Bearer ", "");
         Map<String, Object> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
         String staffId = (String) claims.get("staffId");

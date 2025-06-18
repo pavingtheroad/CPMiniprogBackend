@@ -1,5 +1,6 @@
 package com.changping.backend.service;
 
+import com.changping.backend.DTO.PatrolDTO;
 import com.changping.backend.entity.patrol;
 import org.springframework.http.ResponseEntity;
 
@@ -11,7 +12,7 @@ public interface PatrolService {
      * @param staffId
      * @return
      */
-    List<String> getTodayPatrolsByStaffId(String staffId);
+    List<PatrolDTO> getTodayPatrolsByStaffId(String staffId);
 
     ResponseEntity<?> checkPatrol(String location, String staffId);
 }

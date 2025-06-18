@@ -1,7 +1,7 @@
 package com.changping.backend.service;
 
+import com.changping.backend.DTO.PatrolDTO;
 import com.changping.backend.entity.patrol;
-import com.changping.backend.entity.location;
 import com.changping.backend.repository.LocationRepository;
 import com.changping.backend.repository.PatrolRepository;
 import org.springframework.http.HttpStatus;
@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,16 +24,14 @@ public class PatrolServiceImpl implements PatrolService{
     }
 
     @Override
-    public List<String> getTodayPatrolsByStaffId(String staffId) {
+    public List<PatrolDTO> getTodayPatrolsByStaffId(String staffId) {
         LocalDate today = LocalDate.now();
         LocalDateTime start = today.atStartOfDay(); // 00:00:00
         LocalDateTime end = today.atTime(LocalTime.MAX); // 23:59:59.999999999
 
         return patrolRepository.findByStaffIdAndCheckTimeBetween(staffId, start, end)
                 .stream()
-                .map(patrol::getLocation)
-                .filter(Objects::nonNull)
-                .map(location::getPlaces)
+                .map(PatrolDTO::fromPatrol)
                 .collect(Collectors.toList());
     }
 

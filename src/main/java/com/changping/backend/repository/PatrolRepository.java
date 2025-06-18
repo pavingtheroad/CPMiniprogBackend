@@ -11,5 +11,5 @@ import java.util.List;
 public interface PatrolRepository extends JpaRepository<patrol, Integer> {
     List<patrol> findByStaffIdAndCheckTimeBetween(String staffId, LocalDateTime start, LocalDateTime end);
 
-    patrol findByStaffIdAndLocation(String staffId, String location);
+    patrol findByStaffIdAndLocationId(String staffId, int locationId);
 }

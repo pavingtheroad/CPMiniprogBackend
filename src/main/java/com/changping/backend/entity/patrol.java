@@ -12,7 +12,9 @@ public class patrol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int locationId;
+    @Column(name = "location_id")
+    private Integer locationId;
+    @Column(name = "staff_id")
     private String staffId;
     private LocalDateTime checkTime;
 

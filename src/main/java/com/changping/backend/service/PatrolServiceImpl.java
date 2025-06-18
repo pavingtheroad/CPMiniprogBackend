@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class PatrolServiceImpl implements PatrolService{
@@ -23,26 +26,32 @@ public class PatrolServiceImpl implements PatrolService{
     }
 
     @Override
-    public List<patrol> getTodayPatrolsByStaffId(String staffId) {
+    public List<String> getTodayPatrolsByStaffId(String staffId) {
         LocalDate today = LocalDate.now();
         LocalDateTime start = today.atStartOfDay(); // 00:00:00
         LocalDateTime end = today.atTime(LocalTime.MAX); // 23:59:59.999999999
-        return patrolRepository.findByStaffIdAndCheckTimeBetween(staffId, start, end);
+
+        return patrolRepository.findByStaffIdAndCheckTimeBetween(staffId, start, end)
+                .stream()
+                .map(patrol::getLocation)
+                .filter(Objects::nonNull)
+                .map(location::getPlaces)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ResponseEntity<?> checkPatrol(String location, String staffId) {
         try{
-            location found = locationRepository.findByPlaces(location);
-            if (found != null) {
+            Integer locationId = locationRepository.findLocationIdByPlaces(location);
+            if (locationId != null) {
                 LocalDateTime now = LocalDateTime.now();
-                patrol findPatrol = patrolRepository.findByStaffIdAndLocation(staffId, location);
+                patrol findPatrol = patrolRepository.findByStaffIdAndLocationId(staffId, locationId);
                 if (findPatrol != null) {
                     findPatrol.setCheckTime(now);
                 }
                 else {
                     patrol newPatrol = new patrol();
-                    newPatrol.setLocation(location);
+                    newPatrol.setLocationId(locationId);
                     newPatrol.setStaffId(staffId);
                     newPatrol.setCheckTime(now);
                     patrolRepository.save(newPatrol);

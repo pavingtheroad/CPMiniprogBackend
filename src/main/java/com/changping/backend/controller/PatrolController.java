@@ -34,7 +34,7 @@ public class PatrolController {
     }
 
     @GetMapping("/getMyCheckins")
-    public List<patrol> getMyCheckins(@RequestHeader("Authorization") String authorizationHeader){
+    public List<String> getMyCheckins(@RequestHeader("Authorization") String authorizationHeader){
         String token = authorizationHeader.replace("Bearer ", "");
         Map<String, Object> claims = JwtUtil.verifyToken(token, JwtUtil.DEFAULT_SECRET);
         String staffId = (String) claims.get("staffId");

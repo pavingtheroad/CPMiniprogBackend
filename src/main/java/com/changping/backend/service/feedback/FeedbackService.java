@@ -1,4 +1,4 @@
-package com.changping.backend.service;
+package com.changping.backend.service.feedback;
 
 import com.changping.backend.entity.feedback;
 import org.springframework.http.ResponseEntity;

@@ -19,4 +19,7 @@ public class staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     @JsonManagedReference // 避免无限递归
     private List<LeaveRequest> leaveRequests;
+
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
+    private List<repair> repairs;
 }

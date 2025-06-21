@@ -1,10 +1,11 @@
 package com.changping.backend.config;
 
 import com.changping.backend.jwt.filter.JwtAuthenticationFilter;
-import com.changping.backend.service.StaffUserDetailService;
+import com.changping.backend.service.uil.StaffUserDetailService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,17 +35,19 @@ public class SecurityConfig{
         http
                 .csrf(csrf -> csrf.disable())  // 关闭CSRF，适用于API接口
                 .authorizeHttpRequests(authz ->
-                        authz.requestMatchers("/login", "/register").permitAll()  // 跳过login和register接口
+                        authz.requestMatchers("/login").permitAll()  // 跳过login接口
                                 .requestMatchers("/test").permitAll()
                                 .requestMatchers("/uploadimage/**").permitAll()
                                 .requestMatchers("/uploadrepair/**").permitAll()
+                                .requestMatchers("/admin/**").hasAnyAuthority("ROLE_admin")
+                                .requestMatchers(HttpMethod.OPTIONS, "/admin/**").permitAll()
                                 .requestMatchers("/feedback/**").authenticated()    // 虽然允许全部用户访问，但用户必须登录
-                                .requestMatchers("/checkFeedback/**").hasAnyAuthority("ROLE_admin")
+                                .requestMatchers("/checkFeedback/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")
                                 .requestMatchers("/leave/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin")
                                 .requestMatchers("/checkLeave").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard")
                                 .requestMatchers("/repair/**").authenticated()
                                 .requestMatchers("/checkRepair/**").hasAnyAuthority( "ROLE_admin", "ROLE_repairman")
-                                .requestMatchers("/patrol/**").hasAnyAuthority("ROLE_admin", "ROLE_guard")
+                                .requestMatchers("/patrol/**").hasAnyAuthority("ROLE_teacher", "ROLE_admin", "ROLE_guard")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

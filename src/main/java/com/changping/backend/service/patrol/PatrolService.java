@@ -1,7 +1,6 @@
-package com.changping.backend.service;
+package com.changping.backend.service.patrol;
 
 import com.changping.backend.DTO.PatrolDTO;
-import com.changping.backend.entity.patrol;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

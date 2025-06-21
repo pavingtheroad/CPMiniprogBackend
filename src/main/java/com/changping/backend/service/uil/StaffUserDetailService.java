@@ -1,4 +1,4 @@
-package com.changping.backend.service;
+package com.changping.backend.service.uil;
 
 import com.changping.backend.entity.staff;
 import com.changping.backend.repository.StaffRepository;
@@ -21,8 +21,8 @@ public class StaffUserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        staff staff = staffRepository.findByName(name);  // 按 name 查找
+    public UserDetails loadUserByUsername(String staffId) throws UsernameNotFoundException {
+        staff staff = staffRepository.findByStaffId(staffId);  // 按 name 查找
 
         if (staff == null) {
             throw new UsernameNotFoundException("用户名不存在！");

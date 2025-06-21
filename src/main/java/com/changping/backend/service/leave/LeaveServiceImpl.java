@@ -1,4 +1,4 @@
-package com.changping.backend.service;
+package com.changping.backend.service.leave;
 
 import com.changping.backend.DTO.LeaveRequestDTO;
 import com.changping.backend.entity.LeaveRequest;

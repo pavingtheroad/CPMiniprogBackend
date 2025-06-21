@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("doFilterInternal");
         // 如果是/login或/register请求，跳过JWT验证
-        if (request.getRequestURI().equals("/login") || request.getRequestURI().equals("/register")) {
+        if (request.getRequestURI().equals("/login")) {
             filterChain.doFilter(request, response);  // 放行
             return;
         }

@@ -3,7 +3,7 @@ package com.changping.backend.controller;
 import com.changping.backend.DTO.RepairDTO;
 import com.changping.backend.entity.repair;
 import com.changping.backend.jwt.util.JwtUtil;
-import com.changping.backend.service.RepairService;
+import com.changping.backend.service.repair.RepairService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.changping.backend.service;
+package com.changping.backend.service.patrol;
 
 import com.changping.backend.DTO.PatrolDTO;
 import com.changping.backend.entity.patrol;

@@ -22,6 +22,7 @@ public class repair {
     @Column(name = "repair_date")
     private Date repairDate;
     private String remarks;
+    @Column(columnDefinition = "TINYINT(1)")
     private Boolean handle;
     @Column(name = "staff_id")
     private String staffId;

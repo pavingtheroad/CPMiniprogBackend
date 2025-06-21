@@ -3,7 +3,7 @@ package com.changping.backend.controller;
 import com.changping.backend.DTO.LeaveRequestDTO;
 import com.changping.backend.entity.LeaveRequest;
 import com.changping.backend.jwt.util.JwtUtil;
-import com.changping.backend.service.LeaveService;
+import com.changping.backend.service.leave.LeaveService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

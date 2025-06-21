@@ -1,7 +1,7 @@
 package com.changping.backend.controller;
 
 import com.changping.backend.entity.repair;
-import com.changping.backend.service.RepairService;
+import com.changping.backend.service.repair.RepairService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class checkRepairController {
 
     @GetMapping("/getRepair")
     public List<repair> checkRepair(@RequestParam String handled) {
-        boolean flag = "true".equalsIgnoreCase(handled);
+        boolean flag = "true".equalsIgnoreCase(handled);    // 判断入参是否为true
         return repairService.getRepairListByHandled(flag);
     }
 

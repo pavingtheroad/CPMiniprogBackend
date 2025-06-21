@@ -1,9 +1,8 @@
 package com.changping.backend.controller;
 
 import com.changping.backend.DTO.PatrolDTO;
-import com.changping.backend.entity.patrol;
 import com.changping.backend.jwt.util.JwtUtil;
-import com.changping.backend.service.PatrolService;
+import com.changping.backend.service.patrol.PatrolService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

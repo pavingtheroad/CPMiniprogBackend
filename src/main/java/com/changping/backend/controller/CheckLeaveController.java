@@ -1,7 +1,7 @@
 package com.changping.backend.controller;
 
 import com.changping.backend.DTO.LeaveRequestDTO;
-import com.changping.backend.service.LeaveService;
+import com.changping.backend.service.leave.LeaveService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

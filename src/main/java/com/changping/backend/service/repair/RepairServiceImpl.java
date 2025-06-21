@@ -1,4 +1,4 @@
-package com.changping.backend.service;
+package com.changping.backend.service.repair;
 
 import com.changping.backend.entity.repair;
 import com.changping.backend.repository.RepairRepository;

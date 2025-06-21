@@ -1,7 +1,7 @@
 package com.changping.backend.controller;
 
 import com.changping.backend.entity.feedback;
-import com.changping.backend.service.FeedbackService;
+import com.changping.backend.service.feedback.FeedbackService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
